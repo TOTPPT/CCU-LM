@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "generation": {
+    "temperature1": 0.0,
+    "temperature2": 0.2,
+    "top_p": 1.0,
+    "max_tokens1": 8192,
+    "max_tokens2": 4096
+  },
+  "few_shot": {
+    "stage1": {
+      "enabled": true,
+      "data_path": "./data/stage1_fewshot.json",
+      "indices": [
+        0,
+        1
+      ],
+      "header": "以下为参考示例（仅【病例】文本与参考报告；规则与任务说明见上文 instruction，不在此重复）。\n\n",
+      "example_template": "【示例 {shot_index}】\n{input}\n\n【参考报告输出】\n{output}\n\n",
+      "examples_join": "",
+      "footer": "----------\n【待生成任务】下列为待书写报告的病例数据，请严格遵循上文规则并参照示例风格输出完整报告。\n\n"
+    },
+    "stage2": {
+      "enabled": true,
+      "data_path": "./data/stage2_fewshot.json",
+      "indices": [
+        0,
+        1
+      ],
+      "header": "以下为参考示例（仅检查所见与参考结论；任务说明见上文 instruction）。\n\n",
+      "example_template": "【示例 {shot_index}】\n{input}\n\n【参考结论输出】\n{output}\n\n",
+      "examples_join": "",
+      "footer": "----------\n【待生成任务】下列为待归纳的检查文本，请按上文要求输出结论。\n\n"
+    }
+  },
+  "stage1": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "{instruction}\n\n{few_shot_block}{input}"
+      }
+    ]
+  },
+  "stage2": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "{instruction}\n\n{few_shot_block}{no_think_suffix}\n\n{stage1_pred}"
+      }
+    ]
+  }
+}
